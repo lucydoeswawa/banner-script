@@ -20,3 +20,12 @@ font-family: "Retro", sans-serif;
 font-weight: 400;
 font-size: 38px;
 }
+
+@keyframes blink {
+    50% {
+        opacity: 0.0;
+    }
+}
+.blink {
+    animation: blink 1s step-start 0s infinite;
+}

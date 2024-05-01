@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 
 import { BannerDisplay } from './BannerDisplay';
 import { color_to_key, key_to_color, key_to_patterns, modifier_keys, pattern_to_str, modifier_to_idx } from './banner_standard';
-import { blank_banner, count_pieces, remove_last_piece, split_banners } from './banner_lib';
+import { blank_banner, count_banners, count_pieces, remove_last_piece, split_banners } from './banner_lib';
 
 const BACKSPACE_KEYCODE = 8;
+const LEFT_ARROW_KEYCODE = 37;
+const RIGHT_ARROW_KEYCODE = 39;
 
 const get_active_modifier = modifiers => {
     if (modifiers.length == 0) return '';
@@ -44,9 +46,12 @@ class BannerInput extends Component {
             on_current_color,
             modifiers,
             on_modifiers,
+            index,
+            on_index,
         } = this.props;
 
         const banner_strings = split_banners(banners_string);
+        const count = count_banners(banners_string);
 
         return <div style={{
             width: 500,
@@ -98,13 +103,35 @@ class BannerInput extends Component {
                         ...this.state,
                         banners_string: banners_string + evt.key + blank_banner(),
                     });
+
+                    on_index(index + 1);
                 }
 
                 if (evt.keyCode == BACKSPACE_KEYCODE) {
+                    const count_before = count_banners(banners_string);
+                    const after = apply_backspace(banners_string);
+                    const count_after = count_banners(after);
+
                     this.setState({
                         ...this.state,
-                        banners_string: apply_backspace(banners_string),
+                        banners_string: after,
                     });
+
+                    if (count_after < count_before) {
+                        on_index(index - 1);
+                    }
+                }
+
+                if (evt.keyCode == LEFT_ARROW_KEYCODE) {
+                    if (index > 0) {
+                        on_index(index - 1);
+                    }
+                }
+
+                if (evt.keyCode == RIGHT_ARROW_KEYCODE) {
+                    if (index < count - 1) {
+                        on_index(index + 1);
+                    }
                 }
             }} onKeyUp={evt => {
                 if (modifier_keys.includes(evt.key)) {
@@ -112,7 +139,28 @@ class BannerInput extends Component {
                 }
             }}
             value=""/>
-            {banner_strings.map((s, idx) => <BannerDisplay key={idx} banner_string={s} color={current_color}/>)}
+            {banner_strings.map((s, idx) => {
+                var banner = 
+                    <BannerDisplay
+                    key={idx}
+                    banner_string={s}
+                    color={current_color}/>;
+
+                if (idx == index) {
+                    banner = <div key={idx}>
+                        <BannerDisplay
+                        banner_string={s}
+                        color={current_color}/>
+                        <div className="blink" style={{
+                            backgroundColor: 'white',
+                            marginTop: 4,
+                            height: 5,
+                        }}/>
+                    </div>;
+                }
+
+                return banner;
+            })}
         </div>
     }
 

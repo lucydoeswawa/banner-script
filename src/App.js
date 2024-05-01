@@ -14,11 +14,12 @@ class App extends Component {
         this.state = {
             current_color: 14,
             modifiers: [],
+            index: 0,
         };
     }
 
     render() {
-        const { current_color, modifiers } = this.state;
+        const { current_color, modifiers, index } = this.state;
         return <div>
             <BannerInput
                 current_color={current_color}
@@ -33,6 +34,13 @@ class App extends Component {
                     this.setState({
                         ...this.state,
                         modifiers: mod,
+                    });
+                }}
+                index={index}
+                on_index={idx => {
+                    this.setState({
+                        ...this.state,
+                        index: idx,
                     });
                 }}/>
             <Keyboard rows={keyboard_rows} current_color={current_color}/>

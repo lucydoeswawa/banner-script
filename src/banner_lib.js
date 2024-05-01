@@ -4,6 +4,10 @@ function split_banners(banners_string) {
     return banners_string.split('.').filter(v => v != '');
 }
 
+function count_banners(banners_string) {
+    return split_banners(banners_string).length;
+}
+
 function split_pieces(banner_string) {
     const split = [];
     var idx = 0;
@@ -35,5 +39,6 @@ export {
     count_pieces,
     remove_last_piece,
     blank_banner,
-    split_banners
+    split_banners,
+    count_banners,
 };
