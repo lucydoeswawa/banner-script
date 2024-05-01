@@ -1,33 +1,44 @@
+import { key_to_patterns, key_to_color } from './banner_standard';
+
 const num_row = [
     {
         label: '1',
+        type: 'modifier',
     },
     {
         label: '2',
+        type: 'modifier',
     },
     {
         label: '3',
+        type: 'modifier',
     },
     {
-        label: '4',
+        label: '',
     },
     {
-        label: '5',
+        label: '',
     },
     {
-        label: '6',
+        label: '',
     },
     {
-        label: '7',
+        label: '',
     },
     {
         label: '8',
+        type: 'color',
+        color: key_to_color('8'),
     },
     {
         label: '9',
+        type: 'color',
+        color: key_to_color('9'),
     },
     {
         label: '0',
+        type: 'color',
+        color: key_to_color('0'),
     },
 ];
 
@@ -39,42 +50,52 @@ const q_row = [
     {
         label: 'Q',
         type: 'pattern',
-        patterns: ['base'],
+        patterns: key_to_patterns('q'),
     },
     {
         label: 'W',
         type: 'pattern',
-        patterns: ['border', null, 'curly_border'],
+        patterns: key_to_patterns('w'),
     },
     {
         label: 'E',
         type: 'pattern',
-        patterns: ['half_horizontal', 'half_horizontal_bottom', 'half_vertical', 'half_vertical_right'],
+        patterns: key_to_patterns('e'),
     },
     {
         label: 'R',
         type: 'pattern',
-        patterns: ['stripe_top', 'stripe_bottom', 'stripe_left', 'stripe_right'],
+        patterns: key_to_patterns('r'),
     },
     {
         label: 'T',
         type: 'pattern',
-        patterns: ['stripe_center', 'stripe_downleft', 'stripe_middle', 'stripe_downright'],
+        patterns: key_to_patterns('t'),
     },
     {
-        label: 'y',
+        label: 'Y',
+        type: 'color',
+        color: key_to_color('y'),
     },
     {
-        label: 'u',
+        label: 'U',
+        type: 'color',
+        color: key_to_color('u'),
     },
     {
-        label: 'i',
+        label: 'I',
+        type: 'color',
+        color: key_to_color('i'),
     },
     {
-        label: 'o',
+        label: 'O',
+        type: 'color',
+        color: key_to_color('o'),
     },
     {
-        label: 'p',
+        label: 'P',
+        type: 'color',
+        color: key_to_color('p'),
     },
 ];
 
@@ -86,37 +107,47 @@ const a_row = [
     {
         label: 'A',
         type: 'pattern',
-        patterns: ['triangles_top', 'triangles_bottom'],
+        patterns: key_to_patterns('a'),
     },
     {
         label: 'S',
         type: 'pattern',
-        patterns: ['triangle_top', 'triangle_bottom'],
+        patterns: key_to_patterns('s'),
     },
     {
         label: 'D',
         type: 'pattern',
-        patterns: ['straight_cross', 'cross', 'small_stripes'],
+        patterns: key_to_patterns('d'),
     },
     {
         label: 'F',
         type: 'pattern',
-        patterns: ['square_top_left', 'square_bottom_left', 'square_top_right', 'square_bottom_right'],
+        patterns: key_to_patterns('f'),
     },
     {
-        label: 'g',
+        label: 'G',
+        type: 'color',
+        color: key_to_color('g'),
     },
     {
-        label: 'h',
+        label: 'H',
+        type: 'color',
+        color: key_to_color('h'),
     },
     {
-        label: 'j',
+        label: 'J',
+        type: 'color',
+        color: key_to_color('j'),
     },
     {
-        label: 'k',
+        label: 'K',
+        type: 'color',
+        color: key_to_color('k'),
     },
     {
-        label: 'l',
+        label: 'L',
+        type: 'color',
+        color: key_to_color('l'),
     },
 ];
 
@@ -128,31 +159,37 @@ const z_row = [
     {
         label: 'Z',
         type: 'pattern',
-        patterns: ['creeper', 'piglin', 'skull', 'mojang'],
+        patterns: key_to_patterns('z'),
     },
     {
         label: 'X',
         type: 'pattern',
-        patterns: ['circle', 'flower', 'rhombus', 'globe'],
+        patterns: key_to_patterns('x'),
     },
     {
-        label: 'c',
+        label: 'C',
         type: 'pattern',
-        patterns: ['bricks', 'gradient_up', 'gradient'],
+        patterns: key_to_patterns('c'),
     },
     {
-        label: 'v',
+        label: 'V',
         type: 'pattern',
-        patterns: ['diagonal_left', 'diagonal_up_left', 'diagonal_right', 'diagonal_up_right'],
+        patterns: key_to_patterns('v'),
     },
     {
-        label: 'b',
+        label: 'B',
+        type: 'color',
+        color: key_to_color('b'),
     },
     {
-        label: 'n',
+        label: 'N',
+        type: 'color',
+        color: key_to_color('n'),
     },
     {
-        label: 'm',
+        label: 'M',
+        type: 'color',
+        color: key_to_color('m'),
     },
 ];
 
