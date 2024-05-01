@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './style.css';
+
 import { rows as keyboard_rows } from './keyboard_keys';
 import { Keyboard } from './Keyboard';
 

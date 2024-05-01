@@ -37,19 +37,29 @@ const q_row = [
         width: 0.5,
     },
     {
-        label: 'q',
+        label: 'Q',
+        type: 'pattern',
+        patterns: ['base'],
     },
     {
-        label: 'w',
+        label: 'W',
+        type: 'pattern',
+        patterns: ['border', null, 'curly_border'],
     },
     {
-        label: 'e',
+        label: 'E',
+        type: 'pattern',
+        patterns: ['half_horizontal', 'half_horizontal_bottom', 'half_vertical', 'half_vertical_right'],
     },
     {
-        label: 'r',
+        label: 'R',
+        type: 'pattern',
+        patterns: ['stripe_top', 'stripe_bottom', 'stripe_left', 'stripe_right'],
     },
     {
-        label: 't',
+        label: 'T',
+        type: 'pattern',
+        patterns: ['stripe_center', 'stripe_downleft', 'stripe_middle', 'stripe_downright'],
     },
     {
         label: 'y',
@@ -74,16 +84,24 @@ const a_row = [
         width: 1.0,
     },
     {
-        label: 'a',
+        label: 'A',
+        type: 'pattern',
+        patterns: ['triangles_top', 'triangles_bottom'],
     },
     {
-        label: 's',
+        label: 'S',
+        type: 'pattern',
+        patterns: ['triangle_top', 'triangle_bottom'],
     },
     {
-        label: 'd',
+        label: 'D',
+        type: 'pattern',
+        patterns: ['straight_cross', 'cross', 'small_stripes'],
     },
     {
-        label: 'f',
+        label: 'F',
+        type: 'pattern',
+        patterns: ['square_top_left', 'square_bottom_left', 'square_top_right', 'square_bottom_right'],
     },
     {
         label: 'g',
@@ -108,16 +126,24 @@ const z_row = [
         width: 1.5,
     },
     {
-        label: 'z',
+        label: 'Z',
+        type: 'pattern',
+        patterns: ['creeper', 'piglin', 'skull', 'mojang'],
     },
     {
-        label: 'x',
+        label: 'X',
+        type: 'pattern',
+        patterns: ['circle', 'flower', 'rhombus', 'globe'],
     },
     {
         label: 'c',
+        type: 'pattern',
+        patterns: ['bricks', 'gradient_up', 'gradient'],
     },
     {
         label: 'v',
+        type: 'pattern',
+        patterns: ['diagonal_left', 'diagonal_up_left', 'diagonal_right', 'diagonal_up_right'],
     },
     {
         label: 'b',
