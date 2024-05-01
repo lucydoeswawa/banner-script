@@ -1,20 +1,7 @@
 import React from 'react';
 
-import { key_to_patterns, key_to_color } from './banner_standard';
-import { color_filters, modifier_keys } from './banner_standard';
-
-function split_pieces(banner_string) {
-    const split = [];
-    var idx = 0;
-    while (idx < banner_string.length) {
-        const len = 
-            modifier_keys.includes(banner_string.substring(idx, idx + 1))
-            ? 3 : 2;
-        split.push(banner_string.substring(idx, idx + len));
-        idx += len;
-    }
-    return split;
-}
+import { key_to_patterns, key_to_color, color_filters, modifier_keys } from './banner_standard';
+import { split_pieces } from './banner_lib';
 
 function BannerDisplay({ banner_string }) {
     const pieces = split_pieces(banner_string);

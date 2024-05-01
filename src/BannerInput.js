@@ -2,13 +2,30 @@ import React, { Component } from 'react';
 
 import { BannerDisplay } from './BannerDisplay';
 import { color_to_key, key_to_color, key_to_patterns, modifier_keys, pattern_to_str, modifier_to_idx } from './banner_standard';
+import { blank_banner, count_pieces, remove_last_piece, split_banners } from './banner_lib';
 
-const split_banners_string = banners_string =>
-    banners_string.split('.').filter(v => v != '');
+const BACKSPACE_KEYCODE = 8;
 
 const get_active_modifier = modifiers => {
     if (modifiers.length == 0) return '';
     return modifiers[0];
+}
+
+const apply_backspace = banners_string => {
+    const banners = split_banners(banners_string);
+    const last_banner = banners[banners.length - 1];
+
+    if (count_pieces(last_banner) == 1) {
+        if (banners.length == 1) {
+            return blank_banner();
+        }
+        else {
+            return banners.slice(0, banners.length - 1).join('.');
+        }
+    }
+    else {
+        return banners.slice(0, banners.length - 1).join('.') + '.' + remove_last_piece(last_banner);
+    }
 }
 
 class BannerInput extends Component {
@@ -16,7 +33,7 @@ class BannerInput extends Component {
     constructor() {
         super();
         this.state = {
-            banners_string: '',
+            banners_string: blank_banner(),
         };
     }
 
@@ -29,7 +46,7 @@ class BannerInput extends Component {
             on_modifiers,
         } = this.props;
 
-        const banner_strings = split_banners_string(banners_string);
+        const banner_strings = split_banners(banners_string);
 
         return <div style={{
             width: 500,
@@ -79,7 +96,14 @@ class BannerInput extends Component {
                 if (evt.key == '.') {
                     this.setState({
                         ...this.state,
-                        banners_string: banners_string + evt.key,
+                        banners_string: banners_string + evt.key + blank_banner(),
+                    });
+                }
+
+                if (evt.keyCode == BACKSPACE_KEYCODE) {
+                    this.setState({
+                        ...this.state,
+                        banners_string: apply_backspace(banners_string),
                     });
                 }
             }} onKeyUp={evt => {
