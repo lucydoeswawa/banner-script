@@ -61,16 +61,21 @@ class BannerInput extends Component {
         const count = count_banners(banners_string);
 
         return <div style={{
-            width: 60 * 16,
+            width: 60 * 14,
             height: 120,
             margin: 20,
             display: 'flex',
             flexDirection: 'row',
+            backgroundColor: '#242424',
         }}>
-            <input style={{
+            <input ref={ref => {
+                if (ref != null)
+                    ref.focus();
+            }}
+            style={{
                 border: 'none',
                 outline: 'none',
-                width: 500,
+                width: 60 * 14,
                 height: 120,
                 fontSize: 40,
                 position: 'absolute',
