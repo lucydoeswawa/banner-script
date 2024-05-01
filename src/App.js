@@ -4,7 +4,8 @@ import './style.css';
 
 import { rows as keyboard_rows } from './keyboard_keys';
 import { Keyboard } from './Keyboard';
-import { key_to_color } from './banner_standard';
+import { key_to_color, modifiers } from './banner_standard';
+import { BannerInput } from './BannerInput';
 
 class App extends Component {
 
@@ -12,29 +13,28 @@ class App extends Component {
         super();
         this.state = {
             current_color: 14,
+            modifiers: [],
         };
     }
 
     render() {
-        const { current_color } = this.state;
+        const { current_color, modifiers } = this.state;
         return <div>
-            <input style={{
-                border: 'none',
-                width: 500,
-                fontSize: 40,
-                borderBottom: '2px solid black',
-                margin: 20,
-            }} onPaste={evt => {
-                /* const pasted = evt.clipboardData.getData("Text") */
-            }} onKeyDown={evt => {
-                const maybe_color = key_to_color(evt.key);
-                if (maybe_color !== undefined) {
+            <BannerInput
+                current_color={current_color}
+                on_current_color={cc => {
+                    this.setState({
+                    ...this.state,
+                    current_color: cc,
+                    });
+                }}
+                modifiers={modifiers}
+                on_modifiers={mod => {
                     this.setState({
                         ...this.state,
-                        current_color: maybe_color,
-                    })
-                }
-            }} value=""/>
+                        modifiers: mod,
+                    });
+                }}/>
             <Keyboard rows={keyboard_rows} current_color={current_color}/>
         </div>;
     }

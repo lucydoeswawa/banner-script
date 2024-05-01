@@ -36,11 +36,16 @@ const color_filters = [
     'brightness(0) saturate(100%) invert(0%) sepia(4%) saturate(4467%) hue-rotate(355deg) brightness(99%) contrast(80%)',
 ];
 
-const modifiers = ['1', '2', '3'];
+const modifier_keys = ['1', '2', '3'];
 
 const idx_to_modifier = idx => {
     if (idx == 0) return '';
-    return modifiers[idx - 1];
+    return modifier_keys[idx - 1];
+}
+
+const modifier_to_idx = modifier => {
+    if (modifier == '') return 0;
+    return modifier_keys.indexOf(modifier) + 1;
 }
 
 const patterns = {
@@ -64,7 +69,7 @@ const patterns = {
 const patterns_inverted = {};
 Object.keys(patterns).map(key => {
     patterns[key].map((pattern, idx) => {
-        if (pattern != null) {
+        if (pattern !== null) {
             patterns_inverted[pattern] = idx_to_modifier(idx) + key;
         }
     });
@@ -107,4 +112,7 @@ export {
     pattern_to_str,
     color_to_key,
     key_to_color,
+    modifier_keys,
+    modifier_to_idx,
+    idx_to_modifier,
 };

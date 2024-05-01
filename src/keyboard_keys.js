@@ -191,6 +191,10 @@ const z_row = [
         type: 'color',
         color: key_to_color('m'),
     },
+    {
+        label: '.',
+        type: 'modifier',
+    },
 ];
 
 const rows = [num_row, q_row, a_row, z_row];
