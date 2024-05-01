@@ -13,21 +13,28 @@ const get_active_modifier = modifiers => {
     return modifiers[0];
 }
 
-const apply_backspace = banners_string => {
+const apply_backspace = (banners_string, idx) => {
     const banners = split_banners(banners_string);
-    const last_banner = banners[banners.length - 1];
 
-    if (count_pieces(last_banner) == 1) {
+    if (count_pieces(banners[idx]) == 1) {
         if (banners.length == 1) {
             return blank_banner();
         }
         else {
-            return banners.slice(0, banners.length - 1).join('.');
+            banners.splice(idx, 1);
+            return banners.join('.');
         }
     }
     else {
-        return banners.slice(0, banners.length - 1).join('.') + '.' + remove_last_piece(last_banner);
+        banners[idx] = remove_last_piece(banners[idx]);
+        return banners.join('.');
     }
+}
+
+const add_piece = (banners_string, idx, pattern) => {
+    const banners = split_banners(banners_string);
+    banners[idx] += pattern;
+    return banners.join('.');
 }
 
 class BannerInput extends Component {
@@ -54,7 +61,7 @@ class BannerInput extends Component {
         const count = count_banners(banners_string);
 
         return <div style={{
-            width: 500,
+            width: 60 * 16,
             height: 120,
             margin: 20,
             display: 'flex',
@@ -62,10 +69,10 @@ class BannerInput extends Component {
         }}>
             <input style={{
                 border: 'none',
+                outline: 'none',
                 width: 500,
                 height: 120,
                 fontSize: 40,
-                borderBottom: '2px solid black',
                 position: 'absolute',
                 background: 'none',
             }} onPaste={evt => {
@@ -89,11 +96,13 @@ class BannerInput extends Component {
                 if (maybe_patterns !== undefined) {
                     const modifier = get_active_modifier(modifiers);
                     const mod_idx = modifier_to_idx(modifier);
+
+                    const piece = get_active_modifier(modifiers) + evt.key + color_to_key(current_color);
                     
                     if (maybe_patterns[mod_idx] !== null) {
                         this.setState({
                             ...this.state,
-                            banners_string: banners_string + get_active_modifier(modifiers) + evt.key + color_to_key(current_color),
+                            banners_string: add_piece(banners_string, index, piece),
                         });
                     }
                 }
@@ -109,7 +118,7 @@ class BannerInput extends Component {
 
                 if (evt.keyCode == BACKSPACE_KEYCODE) {
                     const count_before = count_banners(banners_string);
-                    const after = apply_backspace(banners_string);
+                    const after = apply_backspace(banners_string, index);
                     const count_after = count_banners(after);
 
                     this.setState({
@@ -117,7 +126,7 @@ class BannerInput extends Component {
                         banners_string: after,
                     });
 
-                    if (count_after < count_before) {
+                    if (count_after < count_before && index > 0) {
                         on_index(index - 1);
                     }
                 }
