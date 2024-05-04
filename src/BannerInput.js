@@ -166,7 +166,7 @@ class BannerInput extends Component {
                         banner_string={s}
                         color={current_color}/>
                         <div className="blink" style={{
-                            backgroundColor: 'white',
+                            backgroundColor: 'black',
                             marginTop: 4,
                             height: 5,
                         }}/>

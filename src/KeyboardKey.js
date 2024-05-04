@@ -7,6 +7,207 @@ const colorFilters = [
     'brightness(0) saturate(100%) invert(95%) sepia(48%) saturate(5901%) hue-rotate(336deg) brightness(115%) contrast(80%)',
 ];
 
+const KEYCAP_BLACK = '#000000';
+const KEYCAP_GRAY = '#bfbfbf';
+const KEYCAP_LIGHT_GRAY = '#e5e5e5';
+const KEYCAP_DARK_GRAY = '#808080';
+const KEYCAP_WHITE = '#ffffff';
+
+const KEYCAP_DEPTH = 20;
+
+function KeyBase({ keycap_height, keycap_width, crosshair }) {
+    const keycap_height_half = keycap_height / 2;
+    const keycap_width_half = keycap_width / 2;
+    const bars_width = 2;
+    const bars_gap = 4;
+    const bars_gap_half = bars_gap / 2;
+    const exterior_thick = 4;
+    const border_thick = 2;
+
+    return <div style={{
+        margin: 4,
+        height: keycap_height,
+        width: keycap_width,
+    }}>
+        <div style={{
+            height: keycap_height + border_thick + KEYCAP_DEPTH,
+            width: keycap_width,
+            marginTop: 0,
+            marginLeft: 0,
+            border: `${border_thick}px solid ${KEYCAP_BLACK}`,
+        }}>
+            <div style={{
+                position: 'absolute',
+                height: keycap_height,
+                width: keycap_width,
+                marginLeft: 0,
+                marginTop: 0,
+                backgroundColor: KEYCAP_GRAY,
+            }}></div>
+
+            {crosshair ? [<div style={{
+                position: 'absolute',
+                marginTop: 0,
+                marginLeft: keycap_width_half - bars_width - bars_gap_half,
+                height: keycap_height,
+                width: bars_width,
+                backgroundColor: KEYCAP_WHITE,
+            }}></div>,
+            <div style={{
+                position: 'absolute',
+                marginTop: 0,
+                marginLeft: keycap_width_half + bars_gap_half,
+                height: keycap_height,
+                width: bars_width,
+                backgroundColor: KEYCAP_WHITE,
+            }}></div>,
+            <div style={{
+                position: 'absolute',
+                marginTop: keycap_height_half - bars_width - bars_gap_half,
+                marginLeft: 0,
+                height: bars_width,
+                width: keycap_width,
+                backgroundColor: KEYCAP_WHITE,
+            }}></div>,
+            <div style={{
+                position: 'absolute',
+                marginTop: keycap_height_half + bars_gap_half,
+                marginLeft: 0,
+                height: bars_width,
+                width: keycap_width,
+                backgroundColor: KEYCAP_WHITE,
+            }}></div>]
+            : null}
+
+            <div style={{
+                position: 'absolute',
+                marginTop: exterior_thick,
+                marginLeft: exterior_thick,
+                height: keycap_height - exterior_thick * 2,
+                width: keycap_width - exterior_thick * 2,
+                backgroundColor: KEYCAP_WHITE,
+            }}></div>
+
+            { crosshair ? 
+                [<div style={{
+                    position: 'absolute',
+                    marginTop: exterior_thick,
+                    marginLeft: keycap_width_half - bars_gap_half,
+                    height: keycap_height - exterior_thick * 2,
+                    width: bars_gap,
+                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                }}></div>,
+                <div style={{
+                    position: 'absolute',
+                    marginTop: keycap_height_half - bars_gap_half,
+                    marginLeft: exterior_thick,
+                    height: bars_gap,
+                    width: keycap_width - exterior_thick * 2,
+                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                }}></div>]
+            : null}
+
+            <div style={{
+                position: 'absolute',
+                marginTop: keycap_height + 2,
+                marginLeft: -2,
+                height: 20,
+                width: keycap_width + 4,
+                backgroundColor: KEYCAP_BLACK,
+                zIndex: -1,
+            }}></div>
+
+            <div style={{
+                position: 'absolute',
+                marginTop: keycap_height,
+                marginLeft: 0,
+                height: border_thick,
+                width: keycap_width,
+                backgroundColor: KEYCAP_BLACK,
+            }}></div>
+            <div style={{
+                position: 'absolute',
+                marginTop: keycap_height + border_thick,
+                marginLeft: 0,
+                height: KEYCAP_DEPTH,
+                width: keycap_width,
+                backgroundColor: KEYCAP_DARK_GRAY,
+                zIndex: -1,
+            }}></div>
+
+            {crosshair ? [
+                <div style={{
+                    position: 'absolute',
+                    marginTop: keycap_height + border_thick,
+                    marginLeft: keycap_width_half - bars_width - bars_gap_half,
+                    height: KEYCAP_DEPTH,
+                    width: bars_width,
+                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                    zIndex: -1,
+                }}></div>,
+                <div style={{
+                    position: 'absolute',
+                    marginTop: keycap_height + border_thick,
+                    marginLeft: keycap_width_half + bars_gap_half,
+                    height: KEYCAP_DEPTH,
+                    width: bars_width,
+                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                    zIndex: -1,
+                }}></div>,
+                <div style={{
+                    position: 'absolute',
+                    marginTop: keycap_height + border_thick + KEYCAP_DEPTH / 2 - bars_width - bars_gap_half,
+                    marginLeft: 0,
+                    height: bars_width,
+                    width: keycap_width,
+                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                    zIndex: -1,
+                }}></div>,
+                <div style={{
+                    position: 'absolute',
+                    marginTop: keycap_height + border_thick + KEYCAP_DEPTH / 2 + bars_gap_half,
+                    marginLeft: 0,
+                    height: bars_width,
+                    width: keycap_width,
+                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                    zIndex: -1,
+                }}></div>
+            ] : null}
+
+            <div style={{
+                position: 'absolute',
+                marginTop: keycap_height + border_thick + exterior_thick,
+                marginLeft: exterior_thick,
+                height: KEYCAP_DEPTH - exterior_thick * 2,
+                width: keycap_width - exterior_thick * 2,
+                backgroundColor: KEYCAP_LIGHT_GRAY,
+                zIndex: -1,
+            }}></div>
+
+            {crosshair ? [
+                <div style={{
+                    position: 'absolute',
+                    marginTop: keycap_height + border_thick + KEYCAP_DEPTH / 2 - bars_gap_half,
+                    marginLeft: exterior_thick,
+                    height: bars_gap,
+                    width: keycap_width - exterior_thick * 2,
+                    backgroundColor: KEYCAP_GRAY,
+                    zIndex: -1,
+                }}></div>,
+                <div style={{
+                    position: 'absolute',
+                    marginTop: keycap_height + border_thick + exterior_thick,
+                    marginLeft: keycap_width_half - bars_gap_half,
+                    height: KEYCAP_DEPTH - exterior_thick * 2,
+                    width: bars_gap,
+                    backgroundColor: KEYCAP_GRAY,
+                    zIndex: -1,
+                }}></div>
+            ] : null}
+        </div>;
+    </div>;
+}
+
 function KeyboardKey(config) {
     if (config.type == 'pattern')
         return PatternKey(config);
@@ -18,6 +219,12 @@ function KeyboardKey(config) {
         return ModifierKey(config);
 
     const width = (config.width || 1.) * 80.;
+
+    return KeyBase({
+        keycap_height: 80,
+        keycap_width: 80. * (config.width || 1),
+        crosshair: false,
+    });
     
     return <div style={{
         width,
@@ -38,6 +245,12 @@ function KeyboardKey(config) {
 }
 
 function PatternKey(config) {
+    return KeyBase({
+        keycap_width: 80,
+        keycap_height: 80,
+        crosshair: true,
+    });
+
     const color = config.current_color;
 
     return <div style={{
@@ -118,6 +331,12 @@ function ColorKey(config) {
 }
 
 function ModifierKey(config) {
+    return KeyBase({
+        keycap_width: 80,
+        keycap_height: 80,
+        crosshair: true,
+    });
+
     return <div style={{
         width: 80,
         height: 80,
