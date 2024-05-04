@@ -10,15 +10,16 @@ const colorFilters = [
 const KEYCAP_BLACK = '#000000';
 const KEYCAP_GRAY = '#bfbfbf';
 const KEYCAP_LIGHT_GRAY = '#e5e5e5';
+const KEYCAP_LIGHTISH_GRAY = '#d4d4d4';
 const KEYCAP_DARK_GRAY = '#808080';
 const KEYCAP_WHITE = '#ffffff';
 
-const KEYCAP_DEPTH = 20;
+const KEYCAP_DEPTH = 24;
 
-function KeyBase({ keycap_height, keycap_width, crosshair }) {
+function KeyBase({ keycap_height, keycap_width, crosshair, children }) {
     const keycap_height_half = keycap_height / 2;
     const keycap_width_half = keycap_width / 2;
-    const bars_width = 2;
+    const bars_width = 3;
     const bars_gap = 4;
     const bars_gap_half = bars_gap / 2;
     const exterior_thick = 4;
@@ -142,7 +143,7 @@ function KeyBase({ keycap_height, keycap_width, crosshair }) {
                     marginLeft: keycap_width_half - bars_width - bars_gap_half,
                     height: KEYCAP_DEPTH,
                     width: bars_width,
-                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                    backgroundColor: KEYCAP_LIGHTISH_GRAY,
                     zIndex: -1,
                 }}></div>,
                 <div style={{
@@ -151,7 +152,7 @@ function KeyBase({ keycap_height, keycap_width, crosshair }) {
                     marginLeft: keycap_width_half + bars_gap_half,
                     height: KEYCAP_DEPTH,
                     width: bars_width,
-                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                    backgroundColor: KEYCAP_LIGHTISH_GRAY,
                     zIndex: -1,
                 }}></div>,
                 <div style={{
@@ -160,7 +161,7 @@ function KeyBase({ keycap_height, keycap_width, crosshair }) {
                     marginLeft: 0,
                     height: bars_width,
                     width: keycap_width,
-                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                    backgroundColor: KEYCAP_LIGHTISH_GRAY,
                     zIndex: -1,
                 }}></div>,
                 <div style={{
@@ -169,7 +170,7 @@ function KeyBase({ keycap_height, keycap_width, crosshair }) {
                     marginLeft: 0,
                     height: bars_width,
                     width: keycap_width,
-                    backgroundColor: KEYCAP_LIGHT_GRAY,
+                    backgroundColor: KEYCAP_LIGHTISH_GRAY,
                     zIndex: -1,
                 }}></div>
             ] : null}
@@ -180,7 +181,7 @@ function KeyBase({ keycap_height, keycap_width, crosshair }) {
                 marginLeft: exterior_thick,
                 height: KEYCAP_DEPTH - exterior_thick * 2,
                 width: keycap_width - exterior_thick * 2,
-                backgroundColor: KEYCAP_LIGHT_GRAY,
+                backgroundColor: KEYCAP_LIGHTISH_GRAY,
                 zIndex: -1,
             }}></div>
 
@@ -204,7 +205,9 @@ function KeyBase({ keycap_height, keycap_width, crosshair }) {
                     zIndex: -1,
                 }}></div>
             ] : null}
-        </div>;
+
+            {children}
+        </div>
     </div>;
 }
 
@@ -244,12 +247,74 @@ function KeyboardKey(config) {
     </div>;
 }
 
+
+const PATTERN_FRAME_BORDER_THICK = 2;
+
+const PATTERN_FRAME_COLOR_DEFAULT = "#E5E5E5";
+const PATTERN_FRAME_COLOR_MOD1 = "#80C8DF";
+const PATTERN_FRAME_COLOR_MOD2 = "#C77974";
+const PATTERN_FRAME_COLOR_MOD3 = "#D38CCE";
+
+function PatternFrame({height, width, top, left, frame_color, pattern, color}) {
+    return <div style={{
+        position: 'absolute',
+        height,
+        width,
+        marginTop: top,
+        marginLeft: left,
+        border: `${PATTERN_FRAME_BORDER_THICK}px solid ${frame_color}`,
+        boxSizing: 'border-box',
+    }}>
+        {patternImage(pattern, color, height - 4, width - 4)}
+    </div>;
+}
+
 function PatternKey(config) {
-    return KeyBase({
-        keycap_width: 80,
-        keycap_height: 80,
-        crosshair: true,
-    });
+    return <KeyBase
+        keycap_height={80}
+        keycap_width={80}
+        crosshair>
+        {config.patterns[0] ? <PatternFrame
+            top={2}
+            left={20 - 10}
+            width={19}
+            height={38}
+            frame_color={PATTERN_FRAME_COLOR_DEFAULT}
+            pattern={config.patterns[0]}
+            color={config.current_color}/> : null}
+        {config.patterns[1] ? <PatternFrame
+            top={2}
+            left={40 + 20 - 10}
+            width={19}
+            height={38}
+            frame_color={PATTERN_FRAME_COLOR_MOD1}
+            pattern={config.patterns[1]}
+            color={config.current_color}/> : null}
+        {config.patterns[2] ? <PatternFrame
+            top={40}
+            left={20 - 10}
+            width={19}
+            height={38}
+            frame_color={PATTERN_FRAME_COLOR_MOD2}
+            pattern={config.patterns[2]}
+            color={config.current_color}/> : null}
+        {config.patterns[3] ? <PatternFrame
+            top={40}
+            left={40 + 20 - 10}
+            width={19}
+            height={38}
+            frame_color={PATTERN_FRAME_COLOR_MOD3}
+            pattern={config.patterns[3]}
+            color={config.current_color}/> : null}
+        <p style={{
+            position: 'absolute',
+            marginTop: 40 - 14,
+            marginLeft: 40 - 14,
+            fontSize: 28,
+            }}>
+            {config.label}
+        </p>
+    </KeyBase>;
 
     const color = config.current_color;
 
@@ -358,10 +423,13 @@ function ModifierKey(config) {
     </div>;
 }
 
-function patternImage(name, color) {
+function patternImage(name, color, height, width) {
     return <img src={require(`../res/banners/${name}.png`)} style={{
+        position: 'absolute',
         filter: color_filters[color],
-        imageRendering: 'pixelated',
+        height,
+        width,
+        // imageRendering: 'pixelated',
     }}/>;
 }
 
