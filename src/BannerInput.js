@@ -38,9 +38,16 @@ const add_piece = (banners_string, idx, pattern) => {
     return banners.join('.');
 }
 
-function tint_img(img_src, r, g, b) {
-    const img = new Image();
-    img.src = img_src;
+function load_image(img_src) {
+    return new Promise(resolve => {
+        const img = new Image();
+        img.src = img_src;
+        img.onload = resolve(img);
+    });
+}
+
+async function tint_img(img_src, r, g, b) {
+    const img = await load_image(img_src);
 
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
@@ -75,9 +82,6 @@ function generate_tinted_pattern_image(piece) {
 
     const parsed_color = parse_color(banner_colors[color]);
 
-    const pattern_img = new Image();
-    pattern_img.src = require(`../res/banners/${pattern}.png`);
-
     return tint_img(
         require(`../res/banners/${pattern}.png`),
         parsed_color.values[0],
@@ -85,40 +89,22 @@ function generate_tinted_pattern_image(piece) {
         parsed_color.values[2]);
 }
 
-function generate_image(banners_string) {
+async function generate_image(banners_string, scale) {
     const banners = split_banners(banners_string);
 
     const canvas = document.createElement('canvas');
-    canvas.width = 20 * banners.length;
-    canvas.height = 40;
+    canvas.width = ((20 + 2) * banners.length - 2) * scale;
+    canvas.height = 40 * scale;
     const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
 
-    banners.map((banner, idx) => {
+    await Promise.all(banners.map(async (banner, idx) => {
         const pieces = split_pieces(banner);
-        pieces.map(piece => {
-
-            const img = new Image();
-            img.src = generate_tinted_pattern_image(piece);
-            
-            ctx.drawImage(img, idx * 20, 0);
-        })
-    });
-
-    try {
-
-        var url = canvas.toDataURL();
-        fetch(url)
-        .then(res => res.blob())
-        .then(blob => {
-            navigator.clipboard.write([
-                new ClipboardItem({
-                    'image/png': blob,
-                })
-            ]);
+        const imgs = await Promise.all(pieces.map(p => generate_tinted_pattern_image(p).then(load_image)));
+        imgs.map(img => {
+            ctx.drawImage(img, idx * (20 + 2) * scale, 0, img.width * scale, img.height * scale);
         });
-    } catch (error) {
-        console.error(error);
-    }
+    }));
 
     return canvas.toDataURL();
 }
@@ -264,17 +250,26 @@ class BannerInput extends Component {
                     return banner;
                 })}
             </div>
-            <button onClick={() => {
-                const img = generate_image(banners_string);
-                this.setState({
-                    ...this.state,
-                    out_image: img,
-                });
-            }}>IMAGE</button>
+            <button onClick={async () => {
+                const img_src = await generate_image(banners_string, 2);
+
+                try {
+                    fetch(img_src)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        navigator.clipboard.write([
+                            new ClipboardItem({
+                                'image/png': blob,
+                            })
+                        ]);
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
+            }}>copy image</button>
             {out_image != null ? 
             <img src={out_image} style={{
                 imageRendering: 'pixelated',
-                height: 80,
             }}/> :
             null}
         </div>
