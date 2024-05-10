@@ -1,11 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Jersey+10+Charted&display=swap');
-
-@font-face {
-    font-family: "Jersey 10 Charted", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
 @font-face {
     font-family: 'Retro';
     font-style: normal;
@@ -15,10 +7,10 @@
 
 html,
 body {
-/* font-family: 'Retro Gaming'; */
 font-family: "Retro", sans-serif;
 font-weight: 400;
 font-size: 38px;
+margin: 0px;
 }
 
 @keyframes blink {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { colors as banner_colors, color_filters } from './banner_standard';
+import { colors as banner_colors, color_filters, modifier_to_idx } from './banner_standard';
 
 const colorFilters = [
     'brightness(0) saturate(100%) invert(27%) sepia(16%) saturate(3328%) hue-rotate(319deg) brightness(98%) contrast(97%)',
@@ -221,7 +221,17 @@ function KeyboardKey(config) {
     if (config.type == 'modifier')
         return ModifierKey(config);
 
+    if (config.type == 'plain')
+        return PlainKey(config);
+
     const width = (config.width || 1.) * 80.;
+
+    return <div style={{
+        height: 80.,
+        width: 80. * (config.width || 1.),
+    }}>
+
+    </div>
 
     return KeyBase({
         keycap_height: 80,
@@ -247,13 +257,26 @@ function KeyboardKey(config) {
     </div>;
 }
 
-
 const PATTERN_FRAME_BORDER_THICK = 2;
 
 const PATTERN_FRAME_COLOR_DEFAULT = "#E5E5E5";
 const PATTERN_FRAME_COLOR_MOD1 = "#80C8DF";
 const PATTERN_FRAME_COLOR_MOD2 = "#C77974";
 const PATTERN_FRAME_COLOR_MOD3 = "#D38CCE";
+
+const MODIFIER_COLORS = [
+    "#E5E5E5",
+    "#80C8DF",
+    "#C77974",
+    "#D38CCE",
+];
+
+const MODIFIER_ICONS = [
+    null,
+    'arrow_right',
+    'arrow_down',
+    'arrow_diag',
+];
 
 function PatternFrame({height, width, top, left, frame_color, pattern, color}) {
     return <div style={{
@@ -315,112 +338,99 @@ function PatternKey(config) {
             {config.label}
         </p>
     </KeyBase>;
-
-    const color = config.current_color;
-
-    return <div style={{
-        width: 80,
-        height: 80,
-        border: '1px solid white',
-        // boxSizing: 'border-box',
-        display: 'flex',
-        color: 'white',
-        margin: 4,
-    }}>
-        <div style={{
-            width: 20,
-            display: 'flex',
-            flexDirection: 'column',
-        }}>
-            {config.patterns[0] ? patternImage(config.patterns[0], color) : null}
-            {config.patterns[1] ? patternImage(config.patterns[1], color) : null}
-        </div>
-        <div style={{
-            flexGrow: 1,
-            fontSize: 30,
-            alignSelf: 'center',
-            textAlign: 'center',
-            flexDirection: 'row',
-        }}>
-            <div style={{marginLeft: 3, marginTop: 2}}>
-                {config.label}
-            </div>
-        </div>
-        <div style={{
-            width: 20,
-            display: 'flex',
-            flexDirection: 'column',
-        }}>
-            {config.patterns[2] ? patternImage(config.patterns[2], color) : null}
-            {config.patterns[3] ? patternImage(config.patterns[3], color) : null}
-        </div>
-    </div>;
 }
 
 function ColorKey(config) {
-    return <div style={{
-        width: 80,
-        height: 80,
-        border: '1px solid white',
-        display: 'flex',
-        color: 'white',
-        margin: 4,
-    }}>
+    const banner_color = banner_colors[config.color];
+
+    const label_color = config.color == 0 ? KEYCAP_BLACK : KEYCAP_WHITE;
+
+    return <KeyBase
+        keycap_height={80}
+        keycap_width={80}
+        crosshair>
         <div style={{
-            backgroundColor: banner_colors[config.color],
-            height: 60,
-            width: 60,
-            marginLeft: 10,
-            marginTop: 10,
-        }}>
-            <div style={{
-                backgroundColor: 'black',
-                height: 40,
-                width: 40,
-                marginLeft: 10,
-                marginTop: 10,
-                alignItems: 'center',
-                display: 'flex',
+            position: 'absolute',
+            marginTop: 20,
+            marginLeft: 20,
+            width: 40,
+            height: 40,
+            backgroundColor: banner_color,
+            border: `2px solid ${KEYCAP_BLACK}`,
+            boxSizing: 'border-box',
+        }}/>
+        <p style={{
+            position: 'absolute',
+            marginTop: 40 - 14,
+            marginLeft: 40 - 14,
+            fontSize: 28,
+            color: label_color,
             }}>
-                <div style={{
-                    textAlign: 'center',
-                    marginLeft: 5,
-                    marginTop: 3,
-                    fontSize: 30,
-                }}>
-                    {config.label}
-                </div>
-            </div>
-        </div>
-    </div>;
+            {config.label}
+        </p>
+    </KeyBase>;
 }
 
 function ModifierKey(config) {
-    return KeyBase({
-        keycap_width: 80,
-        keycap_height: 80,
-        crosshair: true,
-    });
+    const modifier_idx = modifier_to_idx(config.label);
+    const icon = MODIFIER_ICONS[modifier_idx];
 
-    return <div style={{
-        width: 80,
-        height: 80,
-        border: '1px solid white',
-        display: 'flex',
-        alignItems: 'center',
-        color: 'white',
-        margin: 4,
-    }}>
+    return <KeyBase
+        keycap_width={80}
+        keycap_height={80}
+        crosshair>
         <div style={{
-            width: 80,
-            textAlign: 'center',
-            marginLeft: 5,
-            marginTop: 3,
-            fontSize: 30,
-        }}>
+            position: 'absolute',
+            width: 66,
+            height: 66,
+            marginLeft: 7,
+            marginTop: 7,
+            border: `2px solid ${MODIFIER_COLORS[modifier_idx]}`,
+            boxSizing: 'border-box',
+        }}/>
+        <img style={{
+            position: 'absolute',
+            width: 60,
+            height: 60,
+            marginLeft: 10,
+            marginTop: 10,
+            filter: 'brightness(2.4)',
+            imageRendering: 'pixelated',
+        }}
+        src={require(`../res/icons/${icon}.png`)}/>
+        <p style={{
+            position: 'absolute',
+            marginTop: 40 - 14,
+            marginLeft: 40 - 14,
+            fontSize: 28,
+            }}>
             {config.label}
-        </div>
-    </div>;
+        </p>
+    </KeyBase>;
+}
+
+function PlainKey(config) {
+    return <KeyBase
+        keycap_width={80}
+        keycap_height={80}
+        crosshair>
+        <p style={{
+            position: 'absolute',
+            marginTop: 40 - 14,
+            marginLeft: 40 - 14,
+            fontSize: 28,
+            }}>
+            {config.label}
+        </p>
+        <p style={{
+            position: 'absolute',
+            marginTop: 10,
+            marginLeft: 10,
+            fontSize: 14,
+            }}>
+            {config.comment}
+        </p>
+    </KeyBase>;
 }
 
 function patternImage(name, color, height, width) {

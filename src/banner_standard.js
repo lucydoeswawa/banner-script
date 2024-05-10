@@ -50,20 +50,20 @@ const modifier_to_idx = modifier => {
 
 const patterns = {
     'q': ['base', null, null, null],
-    'w': ['border', null, 'curly_border', null],
-    'e': ['half_horizontal', 'half_horizontal_bottom', 'half_vertical', 'half_vertical_right'],
-    'r': ['stripe_top', 'stripe_bottom', 'stripe_left', 'stripe_right'],
-    't': ['stripe_center', 'stripe_downleft', 'stripe_middle', 'stripe_downright'],
+    'w': ['border', 'curly_border', null, null],
+    'e': ['half_horizontal', 'half_vertical', 'half_horizontal_bottom', 'half_vertical_right'],
+    'r': ['stripe_top', 'stripe_left', 'stripe_bottom', 'stripe_right'],
+    't': ['stripe_center', 'stripe_middle', 'stripe_downleft', 'stripe_downright'],
     
-    'a': ['triangles_top', 'triangles_bottom', null, null],
-    's': ['triangle_top', 'triangle_bottom', null, null],
-    'd': ['straight_cross', 'cross', 'small_stripes', null],
-    'f': ['square_top_left', 'square_bottom_left', 'square_top_right', 'square_bottom_right'],
+    'a': ['triangles_top', null, 'triangles_bottom', null],
+    's': ['triangle_top', null, 'triangle_bottom', null],
+    'd': ['straight_cross', 'small_stripes', 'cross', null],
+    'f': ['square_top_left', 'square_top_right', 'square_bottom_left', 'square_bottom_right'],
 
-    'z': ['creeper', 'piglin', 'skull', 'mojang'],
-    'x': ['circle', 'flower', 'rhombus', 'globe'],
-    'c': ['bricks', null, 'gradient', 'gradient_up'],
-    'v': ['diagonal_left', 'diagonal_up_left', 'diagonal_right', 'diagonal_up_right'],
+    'z': ['creeper', 'skull', 'piglin', 'mojang'],
+    'x': ['circle', 'rhombus','flower',  'globe'],
+    'c': ['bricks', 'gradient', null, 'gradient_up'],
+    'v': ['diagonal_left', 'diagonal_right', 'diagonal_up_left', 'diagonal_up_right'],
 };
 
 const patterns_inverted = {};

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import parse_color from 'parse-css-color';
 
 import { BannerDisplay } from './BannerDisplay';
 import { colors as banner_colors, color_to_key, key_to_color, key_to_patterns, modifier_keys, pattern_to_str, modifier_to_idx } from './banner_standard';
@@ -38,98 +37,22 @@ const add_piece = (banners_string, idx, pattern) => {
     return banners.join('.');
 }
 
-function load_image(img_src) {
-    return new Promise(resolve => {
-        const img = new Image();
-        img.src = img_src;
-        img.onload = resolve(img);
-    });
-}
-
-async function tint_img(img_src, r, g, b) {
-    const img = await load_image(img_src);
-
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-
-    ctx.drawImage(img, 0, 0);
-    const pixels = ctx.getImageData(0, 0, img.width, img.height);
-    const data = pixels.data;
-
-    for (var i = 0; i < data.length; i += 4) {
-        data[i    ] = data[i    ] * r / 255;
-        data[i + 1] = data[i + 1] * g / 255;
-        data[i + 2] = data[i + 2] * b / 255;
-        data[i + 3] = data[i + 3];
-    }
-
-    ctx.putImageData(pixels, 0, 0);
-    return canvas.toDataURL();
-}
-
-function generate_tinted_pattern_image(piece) {
-    var modifier_code = 0;
-    var read_offset = 0;
-    if (modifier_keys.includes(piece.substring(0, 1))) {
-        modifier_code = 1 + modifier_keys.indexOf(piece.substring(0, 1));
-        read_offset = 1;
-    }
-
-    const pattern = key_to_patterns(piece.substring(read_offset, read_offset + 1))[modifier_code];
-    const color = key_to_color(piece.substring(read_offset + 1, read_offset + 2));
-
-    const parsed_color = parse_color(banner_colors[color]);
-
-    return tint_img(
-        require(`../res/banners/${pattern}.png`),
-        parsed_color.values[0],
-        parsed_color.values[1],
-        parsed_color.values[2]);
-}
-
-async function generate_image(banners_string, scale) {
-    const banners = split_banners(banners_string);
-
-    const canvas = document.createElement('canvas');
-    canvas.width = ((20 + 2) * banners.length - 2) * scale;
-    canvas.height = 40 * scale;
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-
-    await Promise.all(banners.map(async (banner, idx) => {
-        const pieces = split_pieces(banner);
-        const imgs = await Promise.all(pieces.map(p => generate_tinted_pattern_image(p).then(load_image)));
-        imgs.map(img => {
-            ctx.drawImage(img, idx * (20 + 2) * scale, 0, img.width * scale, img.height * scale);
-        });
-    }));
-
-    return canvas.toDataURL();
-}
-
 class BannerInput extends Component {
 
     constructor() {
         super();
-        this.state = {
-            banners_string: blank_banner(),
-            out_image: null,
-        };
     }
 
     render() {
-        const { banners_string, out_image } = this.state;
         const {
             current_color,
-            on_current_color,
             modifiers,
-            on_modifiers,
             index,
-            on_index,
+            value,
+            on_change,
         } = this.props;
 
+        const banners_string = value;
         const banner_strings = split_banners(banners_string);
         const count = count_banners(banners_string);
 
@@ -159,16 +82,18 @@ class BannerInput extends Component {
                 }} onKeyDown={evt=> {
                     if (modifier_keys.includes(evt.key)) {
                         if (!modifiers.includes(evt.key)) {
-                            on_modifiers([
-                                evt.key,
-                                ...modifiers,
-                            ]);
+                            on_change({
+                                modifiers: [
+                                    evt.key,
+                                    ...modifiers,
+                                ]
+                            });
                         }
                     }
 
                     const maybe_color = key_to_color(evt.key);
                     if (maybe_color !== undefined) {
-                        on_current_color(maybe_color);
+                        on_change({ current_color: maybe_color });
                     }
 
                     const maybe_patterns = key_to_patterns(evt.key);
@@ -179,20 +104,17 @@ class BannerInput extends Component {
                         const piece = get_active_modifier(modifiers) + evt.key + color_to_key(current_color);
                         
                         if (maybe_patterns[mod_idx] !== null) {
-                            this.setState({
-                                ...this.state,
-                                banners_string: add_piece(banners_string, index, piece),
+                            on_change({
+                                value: add_piece(banners_string, index, piece),
                             });
                         }
                     }
 
                     if (evt.key == '.') {
-                        this.setState({
-                            ...this.state,
-                            banners_string: banners_string + evt.key + blank_banner(),
+                        on_change({
+                            value: banners_string + evt.key + blank_banner(),
+                            index: index + 1,
                         });
-
-                        on_index(index + 1);
                     }
 
                     if (evt.keyCode == BACKSPACE_KEYCODE) {
@@ -200,30 +122,29 @@ class BannerInput extends Component {
                         const after = apply_backspace(banners_string, index);
                         const count_after = count_banners(after);
 
-                        this.setState({
-                            ...this.state,
-                            banners_string: after,
-                        });
-
+                        const change = { value: after };
                         if (count_after < count_before && index > 0) {
-                            on_index(index - 1);
+                            change.index = index - 1;
                         }
+                        on_change(change);
                     }
 
                     if (evt.keyCode == LEFT_ARROW_KEYCODE) {
                         if (index > 0) {
-                            on_index(index - 1);
+                            on_change({ index: index - 1 });
                         }
                     }
 
                     if (evt.keyCode == RIGHT_ARROW_KEYCODE) {
                         if (index < count - 1) {
-                            on_index(index + 1);
+                            on_change({ index: index + 1 });
                         }
                     }
                 }} onKeyUp={evt => {
                     if (modifier_keys.includes(evt.key)) {
-                        on_modifiers(modifiers.filter(modifier => modifier != evt.key));
+                        on_change({
+                            modifiers: modifiers.filter(modi => modi != evt.key),
+                        });
                     }
                 }}
                 value=""/>
@@ -250,28 +171,6 @@ class BannerInput extends Component {
                     return banner;
                 })}
             </div>
-            <button onClick={async () => {
-                const img_src = await generate_image(banners_string, 2);
-
-                try {
-                    fetch(img_src)
-                    .then(res => res.blob())
-                    .then(blob => {
-                        navigator.clipboard.write([
-                            new ClipboardItem({
-                                'image/png': blob,
-                            })
-                        ]);
-                    });
-                } catch (error) {
-                    console.error(error);
-                }
-            }}>copy image</button>
-            {out_image != null ? 
-            <img src={out_image} style={{
-                imageRendering: 'pixelated',
-            }}/> :
-            null}
         </div>
     }
 

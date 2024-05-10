@@ -193,7 +193,8 @@ const z_row = [
     },
     {
         label: '.',
-        type: 'modifier',
+        type: 'plain',
+        comment: 'NEW',
     },
 ];
 
