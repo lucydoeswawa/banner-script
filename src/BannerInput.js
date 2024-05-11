@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { BannerDisplay } from './BannerDisplay';
 import { colors as banner_colors, color_to_key, key_to_color, key_to_patterns, modifier_keys, pattern_to_str, modifier_to_idx } from './banner_standard';
-import { blank_banner, count_banners, count_pieces, remove_last_piece, split_banners, split_pieces } from './banner_lib';
+import { blank_banner, count_banners, count_pieces, remove_last_piece, split_banners, split_pieces, decode_piece } from './banner_lib';
 
 const BACKSPACE_KEYCODE = 8;
 const LEFT_ARROW_KEYCODE = 37;
@@ -16,25 +16,31 @@ const get_active_modifier = modifiers => {
 const apply_backspace = (banners_string, idx) => {
     const banners = split_banners(banners_string);
 
+    if (banners.length == 0) return banners_string;
+
     if (count_pieces(banners[idx]) == 1) {
-        if (banners.length == 1) {
-            return blank_banner();
-        }
-        else {
-            banners.splice(idx, 1);
-            return banners.join('.');
-        }
+        banners.splice(idx, 1);
+        return banners.join('');
     }
     else {
         banners[idx] = remove_last_piece(banners[idx]);
-        return banners.join('.');
+        return banners.join('');
     }
 }
 
-const add_piece = (banners_string, idx, pattern) => {
+const add_piece = (banners_string, idx, piece) => {
     const banners = split_banners(banners_string);
-    banners[idx] += pattern;
-    return banners.join('.');
+
+    if (banners.length == 0) {
+        const decoding = decode_piece(piece);
+        const pattern = decoding[3];
+        
+        if (pattern == 'base') return piece;
+        else return blank_banner() + piece;
+    }
+
+    banners[idx] += piece;
+    return banners.join('');
 }
 
 class BannerInput extends Component {
@@ -100,19 +106,24 @@ class BannerInput extends Component {
                     if (maybe_patterns !== undefined) {
                         const modifier = get_active_modifier(modifiers);
                         const mod_idx = modifier_to_idx(modifier);
-
                         const piece = get_active_modifier(modifiers) + evt.key + color_to_key(current_color);
                         
                         if (maybe_patterns[mod_idx] !== null) {
-                            on_change({
-                                value: add_piece(banners_string, index, piece),
-                            });
+                            const count_before = count_banners(banners_string);
+                            const after = add_piece(banners_string, index, piece);
+                            const count_after = count_banners(after);
+
+                            const change = {value: after};
+                            if (count_after > count_before) {
+                                change.index = index + 1;
+                            }
+                            on_change(change);
                         }
                     }
 
                     if (evt.key == '.') {
                         on_change({
-                            value: banners_string + evt.key + blank_banner(),
+                            value: banners_string + blank_banner(),
                             index: index + 1,
                         });
                     }
@@ -125,6 +136,9 @@ class BannerInput extends Component {
                         const change = { value: after };
                         if (count_after < count_before && index > 0) {
                             change.index = index - 1;
+                        }
+                        else if (count_after == 0) {
+                            change.index = -1;
                         }
                         on_change(change);
                     }

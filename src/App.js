@@ -16,8 +16,8 @@ class App extends Component {
         this.state = {
             current_color: 14,
             modifiers: [],
-            index: 0,
-            value: blank_banner(),
+            index: -1,
+            value: '',
         };
     }
 

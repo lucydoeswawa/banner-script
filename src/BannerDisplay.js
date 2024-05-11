@@ -11,7 +11,6 @@ function BannerDisplay({ banner_string }) {
         height: 120,
         width: 60,
     }}>
-        {pattern_image('base', 0)}
         {pieces.map((piece, idx) => {
             var modifier_code = 0;
             var read_offset = 0;

@@ -1,6 +1,7 @@
 import parse_color from 'parse-css-color';
 
-import { split_banners, split_pieces, modifier_keys } from './banner_lib';
+import { modifier_keys } from './banner_standard';
+import { split_banners, split_pieces } from './banner_lib';
 import { modifier_to_idx, key_to_patterns, key_to_color, colors as banner_colors } from './banner_standard';
 
 function load_image(img_src) {
