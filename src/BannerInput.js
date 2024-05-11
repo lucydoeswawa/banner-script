@@ -16,7 +16,7 @@ const get_active_modifier = modifiers => {
 const apply_backspace = (banners_string, idx) => {
     const banners = split_banners(banners_string);
 
-    if (banners.length == 0) return banners_string;
+    if (idx == -1) return banners_string;
 
     if (count_pieces(banners[idx]) == 1) {
         banners.splice(idx, 1);
@@ -31,12 +31,12 @@ const apply_backspace = (banners_string, idx) => {
 const add_piece = (banners_string, idx, piece) => {
     const banners = split_banners(banners_string);
 
-    if (banners.length == 0) {
+    if (idx == -1) {
         const decoding = decode_piece(piece);
         const pattern = decoding[3];
         
-        if (pattern == 'base') return piece;
-        else return blank_banner() + piece;
+        if (pattern == 'base') return piece + banners_string;
+        else return blank_banner() + piece + banners_string;
     }
 
     banners[idx] += piece;
@@ -74,6 +74,11 @@ class BannerInput extends Component {
                 <input ref={ref => {
                     if (ref != null)
                         ref.focus();
+                }}
+                onBlur={evt => {
+                    setTimeout(() => {
+                        evt.target.focus();
+                    }, 20);
                 }}
                 style={{
                     border: 'none',
@@ -123,7 +128,7 @@ class BannerInput extends Component {
 
                     if (evt.key == '.') {
                         on_change({
-                            value: banners_string + blank_banner(),
+                            value: add_piece(banners_string, index, blank_banner()),
                             index: index + 1,
                         });
                     }
@@ -134,17 +139,14 @@ class BannerInput extends Component {
                         const count_after = count_banners(after);
 
                         const change = { value: after };
-                        if (count_after < count_before && index > 0) {
+                        if (count_after < count_before && index >= 0) {
                             change.index = index - 1;
-                        }
-                        else if (count_after == 0) {
-                            change.index = -1;
                         }
                         on_change(change);
                     }
 
                     if (evt.keyCode == LEFT_ARROW_KEYCODE) {
-                        if (index > 0) {
+                        if (index >= 0) {
                             on_change({ index: index - 1 });
                         }
                     }
@@ -163,27 +165,25 @@ class BannerInput extends Component {
                 }}
                 value=""/>
                 {banner_strings.map((s, idx) => {
-                    var banner = 
-                        <BannerDisplay
+                    const position_style = {
+                        position: 'absolute',
+                        marginTop: 0,
+                        marginLeft: (20 + 2) * 3 * idx,
+                    };
+
+                    return <BannerDisplay
                         key={idx}
                         banner_string={s}
-                        color={current_color}/>;
-
-                    if (idx == index) {
-                        banner = <div key={idx}>
-                            <BannerDisplay
-                            banner_string={s}
-                            color={current_color}/>
-                            <div className="blink" style={{
-                                backgroundColor: 'black',
-                                marginTop: 4,
-                                height: 5,
-                            }}/>
-                        </div>;
-                    }
-
-                    return banner;
+                        color={current_color}
+                        style={position_style}/>;
                 })}
+                <div className="blink" style={{
+                    position: 'absolute',
+                    marginLeft: (20 + 2) * 3 * (index + 1) - 2 * 3,
+                    height: 120,
+                    width: 2 * 3,
+                    backgroundColor: banner_colors[8],
+                }}></div>
             </div>
         </div>
     }

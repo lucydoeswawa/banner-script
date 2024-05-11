@@ -3,13 +3,14 @@ import React from 'react';
 import { key_to_patterns, key_to_color, color_filters, modifier_keys } from './banner_standard';
 import { split_pieces } from './banner_lib';
 
-function BannerDisplay({ banner_string }) {
+function BannerDisplay({ banner_string, style }) {
     const pieces = split_pieces(banner_string);
 
     return <div style={{
         color: 'white',
         height: 120,
         width: 60,
+        ...style,
     }}>
         {pieces.map((piece, idx) => {
             var modifier_code = 0;
